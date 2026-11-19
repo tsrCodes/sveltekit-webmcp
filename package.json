@@ -2,7 +2,13 @@
 	"name": "sveltekit-webmcp",
 	"version": "0.0.1",
 	"keywords": [
-		"svelte"
+		"svelte",
+		"sveltekit",
+		"webmcp",
+		"mcp",
+		"ai",
+		"agents",
+		"model-context"
 	],
 	"files": [
 		"dist",
@@ -22,12 +28,39 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
-		}
+			"svelte": "./dist/index.js",
+			"default": "./dist/index.js"
+		},
+		"./kit": {
+			"types": "./dist/kit/index.d.ts",
+			"svelte": "./dist/kit/index.js",
+			"default": "./dist/kit/index.js"
+		},
+		"./server": {
+			"types": "./dist/server/index.d.ts",
+			"svelte": "./dist/server/index.js",
+			"default": "./dist/server/index.js"
+		},
+		"./devtools": {
+			"types": "./dist/devtools/index.d.ts",
+			"svelte": "./dist/devtools/index.js",
+			"default": "./dist/devtools/index.js"
+		},
+		"./testing": {
+			"types": "./dist/testing/index.d.ts",
+			"svelte": "./dist/testing/index.js",
+			"default": "./dist/testing/index.js"
+		},
+		"./testing/playwright": {
+			"types": "./dist/testing/playwright.d.ts",
+			"svelte": "./dist/testing/playwright.js",
+			"default": "./dist/testing/playwright.js"
+		},
+		"./package.json": "./package.json"
 	},
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run prepack",
+		"build": "vite build && pnpm prepack",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"prepack": "svelte-kit sync && svelte-package && publint",
@@ -36,15 +69,16 @@
 		"lint": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .git/info/exclude && eslint .",
 		"format": "prettier --write . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .git/info/exclude",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run && npm run test:e2e",
-		"test:e2e": "playwright install && playwright test"
+		"test": "pnpm test:unit --run && pnpm test:e2e",
+		"test:e2e": "playwright test",
+		"test:coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.60.0",
 		"@sveltejs/adapter-auto": "^8.0.0",
 		"@sveltejs/kit": "^3.0.0",
-		"@sveltejs/package": "^2.5.8",
+		"@sveltejs/package": "3.0.2",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@types/node": "^24",
 		"@valibot/to-json-schema": "1.8.0",
@@ -71,9 +105,27 @@
 		"zod": "4.6.7"
 	},
 	"peerDependencies": {
-		"svelte": "^5.0.0"
+		"@sveltejs/kit": "^3.0.0",
+		"svelte": "^5.57.0",
+		"@w3c/webmcp-polyfill": "^0.1.0",
+		"@playwright/test": "^1.50.0"
 	},
 	"dependencies": {
-		"@standard-schema/spec": "1.1.0"
+		"@standard-schema/spec": "^1.1.0"
+	},
+	"description": "WebMCP for SvelteKit: expose page tools to AI agents with runes, attachments and remote functions",
+	"license": "MIT",
+	"author": "Oggy (https://github.com/tsrCodes)",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/tsrCodes/sveltekit-webmcp.git"
+	},
+	"peerDependenciesMeta": {
+		"@w3c/webmcp-polyfill": {
+			"optional": true
+		},
+		"@playwright/test": {
+			"optional": true
+		}
 	}
 }
