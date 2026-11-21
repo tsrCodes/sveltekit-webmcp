@@ -1,4 +1,4 @@
-import { createContext } from 'svelte';
+import { createContext, onDestroy } from 'svelte';
 import type { PolyfillLoader, WaitOptions } from '#lib/core/model-context.js';
 import type { ConfirmHandler } from '#lib/core/run.js';
 
@@ -35,8 +35,14 @@ let browserConfig: WebMCPConfig | undefined;
 
 /** Set app-wide WebMCP settings for this component and its children. */
 export function setWebMCP(config: WebMCPConfig = {}): WebMCPConfig {
-	if (typeof document !== 'undefined') browserConfig = config;
-	return setContextValue(config);
+	const value = setContextValue(config);
+	if (typeof document !== 'undefined') {
+		browserConfig = config;
+		onDestroy(() => {
+			if (browserConfig === config) browserConfig = undefined;
+		});
+	}
+	return value;
 }
 
 /**
