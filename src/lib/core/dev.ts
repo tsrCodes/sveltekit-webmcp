@@ -1,7 +1,7 @@
-const env = (import.meta as { env?: { DEV?: boolean } }).env;
+import { dev } from '$app/env';
 
 /** True in Vite dev builds and in tests. */
-export const isDev: boolean = env?.DEV === true;
+export const isDev: boolean = dev;
 
 /** Warn once per message, only in development. */
 const seen = new Set<string>();
