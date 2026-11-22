@@ -1,3 +1,5 @@
+// Throws if this module is ever imported in the browser.
+import '$app/server';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
 import type { ToolHints } from '#lib/core/annotations.js';

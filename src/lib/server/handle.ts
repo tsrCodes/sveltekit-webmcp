@@ -1,3 +1,5 @@
+// Throws if this module is ever imported in the browser.
+import '$app/server';
 import type { Handle } from '@sveltejs/kit/hooks';
 
 /** Who may use WebMCP tools: `'self'`, `'*'`, or an origin like `'https://example.com'`. */

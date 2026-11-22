@@ -1,3 +1,5 @@
+// Throws if this module is ever imported in the browser.
+import '$app/server';
 /** JSON-RPC 2.0 plumbing for the MCP endpoint. */
 
 export type RequestId = string | number;

@@ -1,3 +1,5 @@
+// Throws if this module is ever imported in the browser.
+import '$app/server';
 export {
 	webmcpHandle,
 	toolsPolicy,
