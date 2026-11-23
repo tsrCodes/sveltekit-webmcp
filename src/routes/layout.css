@@ -121,11 +121,12 @@
 			@apply my-4;
 		}
 
-		& ul {
+		/* Direct children only, so lists inside live demos keep their own layout */
+		& > ul {
 			@apply list-disc pl-6;
 		}
 
-		& ol {
+		& > ol {
 			@apply list-decimal pl-6;
 		}
 
