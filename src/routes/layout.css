@@ -1,0 +1,157 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource-variable/inter';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+	--radius: 0.625rem;
+	--background: oklch(0.99 0.002 75);
+	--foreground: oklch(0.2 0.006 265);
+	--card: oklch(1 0 0);
+	--card-foreground: var(--foreground);
+	--popover: oklch(1 0 0);
+	--popover-foreground: var(--foreground);
+	--primary: oklch(0.22 0.006 265);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.96 0.003 75);
+	--secondary-foreground: var(--foreground);
+	--muted: oklch(0.96 0.003 75);
+	--muted-foreground: oklch(0.5 0.01 265);
+	--accent: oklch(0.95 0.004 75);
+	--accent-foreground: var(--foreground);
+	--destructive: oklch(0.58 0.22 27);
+	--border: oklch(0.91 0.005 75);
+	--input: oklch(0.91 0.005 75);
+	--ring: oklch(0.7 0.16 40);
+	/* The brand orange used for feature badges and highlights */
+	--brand: oklch(0.7 0.19 40);
+	--brand-foreground: oklch(0.2 0.006 265);
+	--success: oklch(0.55 0.14 150);
+	--code: oklch(0.975 0.003 75);
+}
+
+.dark {
+	--background: oklch(0.17 0.005 265);
+	--foreground: oklch(0.94 0.003 265);
+	--card: oklch(0.2 0.006 265);
+	--card-foreground: var(--foreground);
+	--popover: oklch(0.2 0.006 265);
+	--popover-foreground: var(--foreground);
+	--primary: oklch(0.94 0.003 265);
+	--primary-foreground: oklch(0.2 0.006 265);
+	--secondary: oklch(0.26 0.006 265);
+	--secondary-foreground: var(--foreground);
+	--muted: oklch(0.26 0.006 265);
+	--muted-foreground: oklch(0.7 0.01 265);
+	--accent: oklch(0.27 0.006 265);
+	--accent-foreground: var(--foreground);
+	--destructive: oklch(0.7 0.19 22);
+	--border: oklch(1 0 0 / 10%);
+	--input: oklch(1 0 0 / 15%);
+	--ring: oklch(0.7 0.16 40);
+	--success: oklch(0.72 0.15 150);
+	--code: oklch(0.14 0.005 265);
+}
+
+@theme inline {
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+	--font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-brand: var(--brand);
+	--color-brand-foreground: var(--brand-foreground);
+	--color-success: var(--success);
+	--color-code: var(--code);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+
+	html {
+		scroll-padding-top: 5rem;
+	}
+
+	body {
+		@apply bg-background font-sans text-foreground antialiased;
+	}
+}
+
+/* Shiki writes both themes as variables; pick one by mode. */
+.shiki,
+.shiki span {
+	color: var(--shiki-light);
+}
+
+.dark .shiki,
+.dark .shiki span {
+	color: var(--shiki-dark);
+}
+
+/* Prose for the markdown docs pages */
+@layer components {
+	.docs-prose {
+		@apply text-[15px] leading-7 text-foreground/90;
+
+		& > p,
+		& > ul,
+		& > ol {
+			@apply my-4;
+		}
+
+		& ul {
+			@apply list-disc pl-6;
+		}
+
+		& ol {
+			@apply list-decimal pl-6;
+		}
+
+		& a {
+			@apply font-medium underline underline-offset-4;
+		}
+
+		& h3 {
+			@apply mt-8 mb-3 text-lg font-semibold tracking-tight;
+		}
+
+		& :not(pre) > code {
+			@apply rounded-md bg-muted px-1.5 py-0.5 font-mono text-[0.85em];
+		}
+
+		& pre.shiki {
+			@apply my-4 overflow-x-auto rounded-xl border bg-code! px-4 py-3.5 font-mono text-[13px] leading-6;
+		}
+
+		& table {
+			@apply my-4 w-full text-sm;
+		}
+
+		& th,
+		& td {
+			@apply border-b px-2 py-2 text-left align-top;
+		}
+	}
+}

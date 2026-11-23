@@ -1,11 +1,18 @@
+import tailwindcss from '@tailwindcss/vite';
+import { mdsvex } from 'mdsvex';
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 import adapter from '@sveltejs/adapter-vercel';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { highlightMarkdown } from './src/docs/highlight.js';
 
 export default defineConfig({
 	plugins: [
+		tailwindcss(),
 		sveltekit({
+			// Docs pages are markdown with live Svelte demos in them
+			extensions: ['.svelte', '.md'],
+			preprocess: [mdsvex({ extensions: ['.md'], highlight: { highlighter: highlightMarkdown } })],
 			experimental: {
 				remoteFunctions: true
 			},
