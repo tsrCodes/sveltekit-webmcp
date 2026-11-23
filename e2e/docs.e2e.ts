@@ -42,7 +42,13 @@ test('attachTool registers per element', async ({ page, webmcp }) => {
 	await expect.poll(() => webmcp.listTools()).not.toContain('docs_open_marker_2');
 });
 
-test('remote form and command tools run the real remote functions', async ({ page, webmcp }) => {
+test('remote form and command tools run the real remote functions', async ({
+	page,
+	webmcp
+}, testInfo) => {
+	// The todo list lives on the shared preview server, so each project adds
+	// its own item and a second project run does not see a duplicate.
+	const todoText = `From the e2e agent (${testInfo.project.name})`;
 	await page.goto('/docs/kit');
 	await webmcp.waitForTool('docs_create_post');
 	const [post] = await Promise.all([
@@ -56,11 +62,11 @@ test('remote form and command tools run the real remote functions', async ({ pag
 	await expect(page.getByLabel('Title')).toHaveValue('Agent post');
 
 	const [todo] = await Promise.all([
-		webmcp.callTool('docs_remote_add_todo', { text: 'From the e2e agent' }),
+		webmcp.callTool('docs_remote_add_todo', { text: todoText }),
 		page.getByRole('button', { name: 'Allow' }).click()
 	]);
 	expect(todo.isError).toBe(false);
-	await expect(page.getByText('From the e2e agent', { exact: true })).toBeVisible();
+	await expect(page.getByText(todoText, { exact: true })).toBeVisible();
 });
 
 test('navigation is allow-listed and page context is opt-in', async ({ page, webmcp }) => {
