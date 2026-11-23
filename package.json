@@ -76,7 +76,7 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.60.0",
-		"@sveltejs/adapter-auto": "^8.0.0",
+		"@sveltejs/adapter-vercel": "7.0.2",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/package": "3.0.2",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
@@ -105,10 +105,10 @@
 		"zod": "4.6.7"
 	},
 	"peerDependencies": {
+		"@playwright/test": "^1.50.0",
 		"@sveltejs/kit": "^3.0.0",
-		"svelte": "^5.57.0",
 		"@w3c/webmcp-polyfill": "^0.1.0",
-		"@playwright/test": "^1.50.0"
+		"svelte": "^5.57.0"
 	},
 	"dependencies": {
 		"@standard-schema/spec": "^1.1.0"
