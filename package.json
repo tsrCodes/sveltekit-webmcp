@@ -70,7 +70,7 @@
 		"format": "prettier --write . --ignore-path .gitignore --ignore-path .prettierignore --ignore-path .git/info/exclude",
 		"test:unit": "vitest",
 		"test": "pnpm test:unit --run && pnpm test:e2e",
-		"test:e2e": "playwright test",
+		"test:e2e": "pnpm build && playwright test",
 		"test:coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
