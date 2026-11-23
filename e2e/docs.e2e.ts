@@ -59,7 +59,7 @@ test('remote form and command tools run the real remote functions', async ({ pag
 		webmcp.callTool('docs_remote_add_todo', { text: 'From the e2e agent' }),
 		page.getByRole('button', { name: 'Allow' }).click()
 	]);
-	expect(todo.isError).toBeUndefined();
+	expect(todo.isError).toBe(false);
 	await expect(page.getByText('From the e2e agent', { exact: true })).toBeVisible();
 });
 
@@ -85,6 +85,19 @@ test('server sets headers and serves MCP', async ({ request }) => {
 		'list_todos',
 		'search_todos'
 	]);
+	// search_todos calls a real remote query on the server.
+	const call = await request.post('/mcp', {
+		data: {
+			jsonrpc: '2.0',
+			id: 2,
+			method: 'tools/call',
+			params: { name: 'search_todos', arguments: { query: 'draft' } }
+		}
+	});
+	// Raw MCP wire format: a success simply has no isError field.
+	const result = (await call.json()).result;
+	expect(result.isError).toBeUndefined();
+	expect(result.content[0].text).toContain('Read the WebMCP draft');
 });
 
 test('devtools fires a tool by hand', async ({ page, webmcp }) => {
@@ -95,4 +108,16 @@ test('devtools fires a tool by hand', async ({ page, webmcp }) => {
 	await page.getByLabel('Input (JSON)').fill('{"message":"hi"}');
 	await page.getByRole('button', { name: 'Run docs_echo' }).click();
 	await expect(page.getByText('You said: hi').first()).toBeVisible();
+});
+
+test('the native run really uses the browser API', async ({ page }, testInfo) => {
+	test.skip(testInfo.project.name !== 'chrome-native', 'Only meaningful with the native flag');
+	await page.goto('/');
+	const isNative = await page.evaluate(() => {
+		const getter = Object.getOwnPropertyDescriptor(Document.prototype, 'modelContext')?.get;
+		return (
+			getter !== undefined && Function.prototype.toString.call(getter).includes('[native code]')
+		);
+	});
+	expect(isNative).toBe(true);
 });
