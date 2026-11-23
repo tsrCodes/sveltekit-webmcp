@@ -21,10 +21,11 @@ describe('site logo', () => {
 		expect(svg).not.toContain('stroke-opacity');
 	});
 
-	test('the large logo adds fading signal arcs on both sides', () => {
+	test('the large logo sets the gear between web angle brackets', () => {
 		const svg = read('logo.svg');
 		expect(count(svg, 'rect')).toBe(TEETH);
-		const arcs = svg.match(/<path\b[^>]*stroke-opacity[^>]*>/g) ?? [];
-		expect(arcs).toHaveLength(4);
+		const brackets = svg.match(/<path\b[^>]*stroke-linejoin="round"[^>]*>/g) ?? [];
+		expect(brackets).toHaveLength(2);
+		expect(svg).not.toContain('stroke-opacity');
 	});
 });

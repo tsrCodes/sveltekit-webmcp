@@ -10,7 +10,7 @@
 		class: className
 	}: { variant?: Variant; size?: number; class?: string } = $props();
 
-	// `mark` is the favicon (gear ring only); `full` adds the signal arcs.
+	// `mark` is the favicon (gear ring only); `full` sets it between web brackets.
 	const src = $derived(variant === 'full' ? full : mark);
 </script>
 
