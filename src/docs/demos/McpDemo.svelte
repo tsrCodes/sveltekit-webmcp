@@ -7,18 +7,22 @@
 	let nextId = 1;
 
 	async function rpc(method: string, params?: Record<string, unknown>) {
-		const response = await fetch('/mcp', {
-			method: 'POST',
-			headers: {
-				'content-type': 'application/json',
-				accept: 'application/json, text/event-stream'
-			},
-			body: JSON.stringify({ jsonrpc: '2.0', id: nextId++, method, params })
-		});
-		const type = response.headers.get('content-type') ?? '';
-		output = type.includes('application/json')
-			? JSON.stringify(await response.json(), null, 2)
-			: `HTTP ${response.status} ${await response.text()}`.trim();
+		try {
+			const response = await fetch('/mcp', {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					accept: 'application/json, text/event-stream'
+				},
+				body: JSON.stringify({ jsonrpc: '2.0', id: nextId++, method, params })
+			});
+			const type = response.headers.get('content-type') ?? '';
+			output = type.includes('application/json')
+				? JSON.stringify(await response.json(), null, 2)
+				: `HTTP ${response.status} ${await response.text()}`.trim();
+		} catch (error) {
+			output = `Request failed: ${error instanceof Error ? error.message : String(error)}`;
+		}
 	}
 </script>
 
