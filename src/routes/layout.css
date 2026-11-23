@@ -24,8 +24,8 @@
 	--border: oklch(0.91 0.005 75);
 	--input: oklch(0.91 0.005 75);
 	--ring: oklch(0.7 0.16 40);
-	/* The brand orange used for feature badges and highlights */
-	--brand: oklch(0.7 0.19 40);
+	/* The brand orange, the same #ff3e00 as the logo, for badges and highlights */
+	--brand: #ff3e00;
 	--brand-foreground: oklch(0.2 0.006 265);
 	--success: oklch(0.55 0.14 150);
 	--code: oklch(0.975 0.003 75);
