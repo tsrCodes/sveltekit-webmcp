@@ -1,4 +1,5 @@
 import { serverTool } from '#lib/server/index.js';
+import { searchTodos } from './demo.remote.js';
 import { searchTodosSchema } from './schemas.js';
 import * as store from './store.server.js';
 
@@ -17,7 +18,8 @@ export const serverTools = [
 		readOnly: true,
 		server: true,
 		limit: { calls: 60, per: '1m' },
-		execute: ({ query, limit }) => store.searchTodos(query, limit)
+		// A real remote query, called on the server inside the request.
+		execute: (input) => searchTodos(input)
 	}),
 	serverTool({
 		name: 'reset_everything',

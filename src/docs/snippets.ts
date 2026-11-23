@@ -34,7 +34,7 @@ test('add_todo adds an item', async () => {
   render(TodoPage);
   await waitForTool('add_todo');
   const res = await callTool('add_todo', { text: 'milk' });
-  expect(res.isError).toBeUndefined();
+  expect(res.isError).toBe(false);
   ctx.restore();
 });`;
 

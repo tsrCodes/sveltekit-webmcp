@@ -24,7 +24,7 @@ function capped<T>(items: T[]): T[] {
 }
 
 export function listTodos(): Todo[] {
-	return todos;
+	return [...todos];
 }
 
 export function addTodo(text: string): Todo {
@@ -45,5 +45,5 @@ export function addPost(title: string, content: string): Post {
 }
 
 export function listPosts(): Post[] {
-	return posts;
+	return [...posts];
 }

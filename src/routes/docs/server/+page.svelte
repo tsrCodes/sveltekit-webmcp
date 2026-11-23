@@ -82,6 +82,14 @@ export const handle = sequence(webmcpHandle({ originTrialToken: WEBMCP_OT, allow
         readOnly: true,
         server: true,
         execute: (_input, event) => db.todos(event.locals.user)
+      }),
+      serverTool({
+        name: 'search_todos',
+        description: 'Search todos',
+        input: searchTodosSchema,
+        readOnly: true,
+        server: true,
+        execute: (input) => searchTodos(input) // a remote query works too
       })
     ],
     authorize: ({ locals }) => !!locals.user

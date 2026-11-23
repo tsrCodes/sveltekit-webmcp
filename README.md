@@ -218,6 +218,14 @@ export const handle = sequence(
 				readOnly: true,
 				server: true,
 				execute: (_input, event) => db.todos(event.locals.user)
+			}),
+			serverTool({
+				name: 'search_todos',
+				description: 'Search todos',
+				input: searchTodosSchema,
+				readOnly: true,
+				server: true,
+				execute: (input) => searchTodos(input) // remote functions work here too
 			})
 		],
 		authorize: ({ locals }) => !!locals.user
@@ -227,7 +235,8 @@ export const handle = sequence(
 
 `webmcpHandle` adds `Origin-Trial` and `Permissions-Policy: tools=(self)` to HTML responses.
 `mcpHandle` serves `/mcp` (MCP Streamable HTTP, JSON responses) for non-browser agents; only tools
-marked `server: true` are listed, and each one receives the request event.
+marked `server: true` are listed, and each one receives the request event. Remote functions
+can be called from `execute`, so the same query or command serves both kinds of agent.
 
 ### Devtools
 
@@ -253,7 +262,7 @@ test('add_todo adds an item', async () => {
 	render(TodoPage);
 	await waitForTool('add_todo');
 	const res = await callTool('add_todo', { text: 'milk' });
-	expect(res.isError).toBeUndefined();
+	expect(res.isError).toBe(false);
 	ctx.restore();
 });
 ```
@@ -264,7 +273,7 @@ import { expect, test } from 'sveltekit-webmcp/testing/playwright';
 test('agent can add a todo', async ({ page, webmcp }) => {
 	await page.goto('/todos');
 	await webmcp.waitForTool('add_todo');
-	expect((await webmcp.callTool('add_todo', { text: 'milk' })).isError).toBeUndefined();
+	expect((await webmcp.callTool('add_todo', { text: 'milk' })).isError).toBe(false);
 });
 ```
 
