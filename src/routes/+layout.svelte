@@ -10,6 +10,7 @@
 	import { Confirmer } from '#docs/confirmer.svelte.js';
 	import SiteFooter from '#docs/components/SiteFooter.svelte';
 	import SiteHeader from '#docs/components/SiteHeader.svelte';
+	import favicon from '#docs/assets/favicon.svg';
 
 	let { children }: { children: Snippet } = $props();
 
@@ -45,6 +46,7 @@
 </script>
 
 <svelte:head>
+	<link rel="icon" href={favicon} />
 	<meta name="description" content="WebMCP for SvelteKit: expose page tools to AI agents." />
 </svelte:head>
 

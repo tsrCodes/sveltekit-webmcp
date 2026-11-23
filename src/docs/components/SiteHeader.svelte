@@ -4,6 +4,7 @@
 	import { Button } from '#docs/components/ui/button/index.js';
 	import * as Sheet from '#docs/components/ui/sheet/index.js';
 	import DocsNav from './DocsNav.svelte';
+	import Logo from './Logo.svelte';
 	import ModeToggle from './ModeToggle.svelte';
 
 	const REPO_URL = 'https://github.com/tsrCodes/sveltekit-webmcp';
@@ -26,8 +27,12 @@
 				<DocsNav onnavigate={() => (isMenuOpen = false)} />
 			</Sheet.Content>
 		</Sheet.Root>
-		<a href={resolve('/')} class="font-mono text-sm font-bold tracking-tight whitespace-nowrap">
-			sveltekit-<span class="text-brand">webmcp</span>
+		<a
+			href={resolve('/')}
+			class="flex items-center gap-2 font-mono text-sm font-bold tracking-tight whitespace-nowrap"
+		>
+			<Logo size={22} />
+			<span>sveltekit-<span class="text-brand">webmcp</span></span>
 		</a>
 		<nav class="ml-auto flex items-center gap-1" aria-label="Site">
 			<Button variant="ghost" size="sm" href={resolve('/docs/[...slug]', { slug: 'tools' })}

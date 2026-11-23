@@ -1,3 +1,5 @@
+<p align="center"><img src="src/docs/assets/logo.svg" alt="" width="96" height="96" /></p>
+
 # sveltekit-webmcp
 
 WebMCP for SvelteKit. Let AI agents use your app through tools you define, written the Svelte way:
