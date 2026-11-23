@@ -2,22 +2,22 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 
 const ORANGE = '#ff3e00';
-// Two angle brackets, the wrench shaft and the wrench head.
-const STROKES = 4;
+const GREY = '#8a8a8a';
 
 function read(name: string): string {
 	return readFileSync(new URL(`./assets/${name}`, import.meta.url), 'utf8');
 }
 
-function strokeWidths(svg: string): number[] {
-	return [...svg.matchAll(/stroke-width="([\d.]+)"/g)].map(([, width]) => Number(width));
+function strokeWidth(svg: string): number {
+	return Number(svg.match(/stroke-width="([\d.]+)"/)?.[1]);
 }
 
 describe.each(['favicon.svg', 'logo.svg'])('%s', (name) => {
-	test('draws </> with a wrench as the slash, in the brand orange', () => {
+	test('draws a grey page and an orange agent joined by <>', () => {
 		const svg = read(name);
-		expect(svg).toContain(`stroke="${ORANGE}"`);
-		expect(svg.match(/<path\b/g)).toHaveLength(STROKES);
+		expect(svg).toMatch(new RegExp(`<rect\\b[^>]*stroke="${GREY}"`));
+		expect(svg).toMatch(new RegExp(`<circle\\b[^>]*stroke="${ORANGE}"`));
+		expect(svg.match(new RegExp(`<path\\b[^>]*stroke="${ORANGE}"`, 'g'))).toHaveLength(2);
 	});
 
 	test('is our own mark, with no third-party logo inside', () => {
@@ -26,7 +26,5 @@ describe.each(['favicon.svg', 'logo.svg'])('%s', (name) => {
 });
 
 test('the favicon uses heavier strokes so it still reads in a browser tab', () => {
-	const small = Math.min(...strokeWidths(read('favicon.svg')));
-	const large = Math.max(...strokeWidths(read('logo.svg')));
-	expect(small).toBeGreaterThan(large);
+	expect(strokeWidth(read('favicon.svg'))).toBeGreaterThan(strokeWidth(read('logo.svg')));
 });

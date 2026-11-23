@@ -10,7 +10,7 @@
 		class: className
 	}: { variant?: Variant; size?: number; class?: string } = $props();
 
-	// Both draw </> with a wrench as the slash; `mark` has heavier strokes for small sizes.
+	// Both draw a page <> agent link; `mark` has heavier strokes for small sizes.
 	const src = $derived(variant === 'full' ? full : mark);
 </script>
 
