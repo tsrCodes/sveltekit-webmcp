@@ -1,5 +1,6 @@
 import {
 	SPEC_EVENTS,
+	SPEC_PROPERTY,
 	type ListedTool,
 	type ModelContextLike,
 	type SpecRegisterOptions,
@@ -32,7 +33,7 @@ function nameEvent(type: string, toolName: string): Event {
 	return Object.assign(new Event(type), { toolName });
 }
 
-class FakeModelContext extends EventTarget {
+class FakeModelContext extends EventTarget implements ModelContextLike {
 	#tools = new Map<string, Entry>();
 	#nextError: Error | undefined;
 
@@ -111,14 +112,14 @@ class FakeModelContext extends EventTarget {
  * `toolchange`, `toolactivated` and `toolcancel` are dispatched.
  */
 export function mockModelContext(): MockModelContext {
-	const previous = Object.getOwnPropertyDescriptor(document, 'modelContext');
+	const previous = Object.getOwnPropertyDescriptor(document, SPEC_PROPERTY);
 	const fake = new FakeModelContext();
-	Object.defineProperty(document, 'modelContext', { value: fake, configurable: true });
+	Object.defineProperty(document, SPEC_PROPERTY, { value: fake, configurable: true });
 	refreshSupport();
 	return Object.assign(fake, {
 		restore() {
-			if (previous) Object.defineProperty(document, 'modelContext', previous);
-			else delete (document as { modelContext?: unknown }).modelContext;
+			if (previous) Object.defineProperty(document, SPEC_PROPERTY, previous);
+			else Reflect.deleteProperty(document, SPEC_PROPERTY);
 			refreshSupport();
 		}
 	});

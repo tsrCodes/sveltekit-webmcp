@@ -49,10 +49,21 @@ export const SPEC_EVENTS = {
 	cancel: 'toolcancel'
 } as const;
 
+/** Name of the `Document` property that holds the model context. */
+export const SPEC_PROPERTY = 'modelContext';
+
+/** Method names of the draft, for code that cannot import types (e.g. `page.evaluate`). */
+export const SPEC_METHODS = {
+	register: 'registerTool',
+	list: 'getTools',
+	execute: 'executeTool'
+} as const satisfies Record<string, keyof ModelContextLike>;
+
 /** The document's model context, or `undefined` on the server or in unsupported browsers. */
 export function getModelContext(): ModelContextLike | undefined {
 	if (typeof document === 'undefined') return undefined;
-	return (document as { modelContext?: ModelContextLike }).modelContext ?? undefined;
+	const holder = document as unknown as Record<string, ModelContextLike | undefined>;
+	return holder[SPEC_PROPERTY] ?? undefined;
 }
 
 /** Loads a polyfill module. The module may export `installWebMCP()`. */

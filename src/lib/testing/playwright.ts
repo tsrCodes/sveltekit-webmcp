@@ -2,7 +2,9 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { test as base } from '@playwright/test';
-import { fromWire, type ToolResult } from '#lib/core/result.js';
+import { SPEC_METHODS, SPEC_PROPERTY } from '#lib/core/model-context.js';
+import { fromWire } from '#lib/core/result.js';
+import { withErrorFlag, type TestToolResult } from '#lib/testing/call.js';
 
 /** Helpers exposed to Playwright tests through the `webmcp` fixture. */
 export interface WebMCPFixture {
@@ -11,7 +13,38 @@ export interface WebMCPFixture {
 	/** Wait until the page registers `name`. */
 	waitForTool(name: string, timeout?: number): Promise<void>;
 	/** Call a tool the way an agent would and get the parsed result. */
-	callTool(name: string, input?: object): Promise<ToolResult>;
+	callTool(name: string, input?: object): Promise<TestToolResult>;
+}
+
+const NAMES = { property: SPEC_PROPERTY, list: SPEC_METHODS.list, execute: SPEC_METHODS.execute };
+
+type SpecNames = typeof NAMES;
+
+interface PageRequest {
+	names: SpecNames;
+	action: 'list' | 'call';
+	toolName?: string;
+	input?: object;
+}
+
+/**
+ * Runs inside the page, so it must not reference anything outside its own
+ * body. Spec names arrive as arguments from `core/`.
+ */
+async function inPage(request: PageRequest): Promise<string[] | string> {
+	type Listed = { name: string };
+	type Context = Record<string, (...args: unknown[]) => Promise<unknown>>;
+	const { names } = request;
+	const context = (document as unknown as Record<string, Context | undefined>)[names.property];
+	if (!context) {
+		if (request.action === 'list') return [];
+		throw new Error('No model context on this page');
+	}
+	const tools = (await context[names.list]()) as Listed[];
+	if (request.action === 'list') return tools.map((tool) => tool.name);
+	const target = tools.find((tool) => tool.name === request.toolName);
+	if (!target) throw new Error(`No tool named "${request.toolName}"`);
+	return (await context[names.execute](target, request.input ?? {})) as string;
 }
 
 function polyfillSource(): string {
@@ -30,52 +63,34 @@ export const test = base.extend<{ webmcp: WebMCPFixture; webmcpPolyfill: boolean
 	webmcpPolyfill: [true, { option: true }],
 	webmcp: async ({ page, webmcpPolyfill }, use) => {
 		if (webmcpPolyfill) await page.addInitScript({ content: polyfillSource() });
-		const listTools = () =>
-			page.evaluate(async () => {
-				const context = (
-					document as unknown as { modelContext?: { getTools(): Promise<{ name: string }[]> } }
-				).modelContext;
-				return context ? (await context.getTools()).map((tool) => tool.name) : [];
-			});
+		const listTools = async () =>
+			(await page.evaluate(inPage, {
+				names: NAMES,
+				action: 'list'
+			} satisfies PageRequest)) as string[];
 		await use({
 			listTools,
 			async waitForTool(name, timeout = 5_000) {
-				await page.waitForFunction(
-					async (toolName) => {
-						const context = (
-							document as unknown as { modelContext?: { getTools(): Promise<{ name: string }[]> } }
-						).modelContext;
-						const tools = context ? await context.getTools() : [];
-						return tools.some((tool) => tool.name === toolName);
-					},
-					name,
-					{ timeout }
-				);
+				const started = Date.now();
+				while (!(await listTools()).includes(name)) {
+					if (Date.now() - started > timeout) {
+						throw new Error(`Tool "${name}" was not registered within ${timeout}ms`);
+					}
+					await page.waitForTimeout(50);
+				}
 			},
 			async callTool(name, input = {}) {
-				const raw = await page.evaluate(
-					async ([toolName, args]) => {
-						type Listed = { name: string };
-						const context = (
-							document as unknown as {
-								modelContext?: {
-									getTools(): Promise<Listed[]>;
-									executeTool(tool: Listed, input: object): Promise<string>;
-								};
-							}
-						).modelContext;
-						if (!context) throw new Error('No document.modelContext on this page');
-						const tools = await context.getTools();
-						const target = tools.find((tool) => tool.name === toolName);
-						if (!target) throw new Error(`No tool named "${toolName}"`);
-						return context.executeTool(target, args);
-					},
-					[name, input] as const
-				);
-				return fromWire(raw);
+				const raw = await page.evaluate(inPage, {
+					names: NAMES,
+					action: 'call',
+					toolName: name,
+					input
+				} satisfies PageRequest);
+				return withErrorFlag(fromWire(raw));
 			}
 		});
 	}
 });
 
 export { expect } from '@playwright/test';
+export type { TestToolResult } from '#lib/testing/call.js';
