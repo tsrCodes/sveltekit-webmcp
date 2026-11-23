@@ -56,7 +56,7 @@ describe('tool()', () => {
 		expect(bad.content[0].text).toContain('text:');
 		expect(execute).not.toHaveBeenCalled();
 		const good = await callTool('add_todo', { text: 'milk' });
-		expect(good).toEqual({ content: [{ type: 'text', text: 'Added "milk"' }] });
+		expect(good).toEqual({ content: [{ type: 'text', text: 'Added "milk"' }], isError: false });
 	});
 
 	it('sends JSON Schema converted from the Standard Schema', async () => {
@@ -74,7 +74,10 @@ describe('tool()', () => {
 			properties: { n: { type: 'number' } }
 		});
 		expect(listed.annotations).toEqual({ readOnlyHint: true });
-		expect(await callTool('typed', { n: 1 })).toEqual({ content: [{ type: 'text', text: 'ok' }] });
+		expect(await callTool('typed', { n: 1 })).toEqual({
+			content: [{ type: 'text', text: 'ok' }],
+			isError: false
+		});
 	});
 
 	it('re-registers only when the shape changes', async () => {
@@ -175,7 +178,7 @@ describe('tool()', () => {
 			execute: () => 'ok'
 		});
 		await waitForTool('limited');
-		expect((await callTool('limited')).isError).toBeUndefined();
+		expect((await callTool('limited')).isError).toBe(false);
 		const second = await callTool('limited');
 		expect(second.isError).toBe(true);
 		expect(second.content[0].text).toMatch(/^Rate limited/);
