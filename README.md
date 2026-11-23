@@ -299,6 +299,10 @@ pnpm build        # docs site + package + publint
 turned on (`--enable-features=WebMCP`). If your stable Chrome does not ship it yet,
 point the run at another channel, for example `WEBMCP_CHANNEL=chrome-dev`.
 
+The docs site is markdown: one page per area in `src/content/docs`, rendered by mdsvex
+at `/docs/[...slug]`, with the live demos in `src/docs/demos`. It deploys to Vercel;
+`WEBMCP_OT` (optional) sets the origin trial token.
+
 ## License
 
 MIT
