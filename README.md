@@ -1,4 +1,4 @@
-<p align="center"><img src="src/docs/assets/logo.svg" alt="" width="96" height="96" /></p>
+<p align="center"><img src="src/docs/assets/logo-stacked.svg" alt="sveltekit-webmcp" width="360" height="200" /></p>
 
 # sveltekit-webmcp
 
