@@ -2,8 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 // The default project uses Playwright's Chromium with the WebMCP polyfill.
 // Set WEBMCP_NATIVE=1 to also run against installed Chrome with the native
-// API turned on (needs a Chrome build that ships WebMCP behind the flag).
+// API turned on through the WebMCP feature switch. WEBMCP_CHANNEL picks the
+// Chrome channel (chrome, chrome-beta, chrome-dev, chrome-canary) when the
+// stable build does not ship the API yet.
 const native = process.env.WEBMCP_NATIVE === '1';
+const channel = process.env.WEBMCP_CHANNEL ?? 'chrome';
 
 export default defineConfig<{ webmcpPolyfill: boolean }>({
 	testDir: 'e2e',
@@ -19,9 +22,9 @@ export default defineConfig<{ webmcpPolyfill: boolean }>({
 						name: 'chrome-native',
 						use: {
 							...devices['Desktop Chrome'],
-							channel: 'chrome',
+							channel,
 							webmcpPolyfill: false,
-							launchOptions: { args: ['--enable-features=WebMCPTesting'] }
+							launchOptions: { args: ['--enable-features=WebMCP'] }
 						}
 					}
 				]

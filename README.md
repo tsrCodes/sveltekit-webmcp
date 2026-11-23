@@ -295,7 +295,9 @@ pnpm test:e2e     # builds, then runs Playwright against the docs site with the 
 pnpm build        # docs site + package + publint
 ```
 
-`WEBMCP_NATIVE=1 pnpm test:e2e` adds a run in installed Chrome with the native API flag.
+`WEBMCP_NATIVE=1 pnpm test:e2e` adds a run in installed Chrome with the native API
+turned on (`--enable-features=WebMCP`). If your stable Chrome does not ship it yet,
+point the run at another channel, for example `WEBMCP_CHANNEL=chrome-dev`.
 
 ## License
 
