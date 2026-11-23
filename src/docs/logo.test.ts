@@ -6,7 +6,7 @@ const ORANGE = '#ff3e00';
 const STROKES = 4;
 
 function read(name: string): string {
-	return readFileSync(`src/docs/assets/${name}`, 'utf8');
+	return readFileSync(new URL(`./assets/${name}`, import.meta.url), 'utf8');
 }
 
 function strokeWidths(svg: string): number[] {
